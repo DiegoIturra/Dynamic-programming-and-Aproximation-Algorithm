@@ -64,7 +64,7 @@ class Graph{
 				for(int i=0 ; i<numVertex ; i++){
 					if(!visited[i]){
 						u = i;
-						visited[i] = true;
+						visited[u] = true;
 
 						unordered_set<int>::iterator it = graph[i].begin();
 						v = *it;
@@ -98,10 +98,10 @@ class Graph{
 
 			cout << "Numero de vertices en 2-aprox vertex cover: " << coveredSet.size() << endl;
 
-			for(unordered_set<int>::iterator it = coveredSet.begin() ; it != coveredSet.end() ; it++){
+			/*for(unordered_set<int>::iterator it = coveredSet.begin() ; it != coveredSet.end() ; it++){
 				cout << *it << " ";
 			}
-			cout << endl;
+			cout << endl;*/
 		}
 };
 
@@ -109,7 +109,7 @@ class Graph{
 
 int main(){
 
-	int numVertex = 7;
+	/*int numVertex = 7;
 	
 	//Ejemplo con vertex cover 2-aproximado = 6 y valor optimo = 3
 	Graph graph = Graph(numVertex);
@@ -135,6 +135,43 @@ int main(){
 	graph2.addEdge(0,5);
 	graph2.printGraph();
 	graph2.aproxVertexCover();
+	*/
+
+
+	//Cliques
+	int numCliques = 5;
+	int numVertex = 11;
+	
+	int sizeOfclique;
+
+	Graph graph = Graph(numVertex);
+
+	while(numCliques--){
+
+		cout << "tamaño de clique: ";
+		cin >> sizeOfclique;
+
+		vector<int> setOfClique;
+		int vertex;
+		while(sizeOfclique--){
+			cout << "Elementos en clique: ";
+			cin >> vertex;
+			setOfClique.push_back(vertex);
+		}
+
+		for(int i=0 ; i<setOfClique.size() ; i++){
+			for(int j=0 ; j<setOfClique.size() ; j++){
+				if(setOfClique[i] != setOfClique[j]){
+					graph.addEdge(setOfClique[i],setOfClique[j]);
+				}
+			}
+		}
+	}
+
+	graph.printGraph();
+	graph.aproxVertexCover();
+	
+
 
 	return 0;
 }
