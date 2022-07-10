@@ -10,6 +10,7 @@ vector<vector<int> > buildMatrix(int n , int m){
     return scoreMatrix;
 }
 
+
 //Rellenar matriz con matching entre las secuencias
 void fillMatchMatrix(vector<vector<int> >& matchMatrix,const string& sequence1 , const string& sequence2){
     const int match_score = 1;
@@ -21,12 +22,8 @@ void fillMatchMatrix(vector<vector<int> >& matchMatrix,const string& sequence1 ,
             }else{
                 matchMatrix[i][j] = mismatch_penalty;
             }
-
-            cout << matchMatrix[i][j] << " ";
         }
-        cout << endl;
     }
-    cout << endl;
 }
 
 
@@ -48,7 +45,6 @@ int gapPenalty(){
 }
 
 
-
 void getAlignmentSolution(vector<vector<int> >& scoreMatrix, vector<vector<int> >& matchMatrix,const string& sequence1, const string& sequence2){
     string alignmentA;
     string alignmentB;
@@ -57,23 +53,23 @@ void getAlignmentSolution(vector<vector<int> >& scoreMatrix, vector<vector<int> 
     int j = sequence2.length();
 
     while(i > 0 && j > 0){
+
+        //Caso cuando casilla superior tiene mayor valor
+        if(i > 0 && scoreMatrix[i][j] == scoreMatrix[i-1][j] + gapPenalty()){
+            cout << "superior" << endl;
+            alignmentA = sequence1[i-1] + alignmentA;
+            alignmentB = '-' + alignmentB;
+            i--;
+        }
         //Caso cuando la diagonal mas el match tiene maximo valor
-        if(i > 0 && j > 0 && scoreMatrix[i][j] == scoreMatrix[i-1][j-1] + matchMatrix[i-1][j-1]){
+        else if(i > 0 && j > 0 && scoreMatrix[i][j] == scoreMatrix[i-1][j-1] + matchMatrix[i-1][j-1]){
             cout << "Diagonal" << endl;
             alignmentA = sequence1[i-1] + alignmentA;
             alignmentB = sequence2[j-1] + alignmentB;
             i--;
             j--;
         }
-
-        //Caso cuando casilla superior tiene mayor valor
-        else if(i > 0 && scoreMatrix[i][j] == scoreMatrix[i-1][j] + gapPenalty()){
-            cout << "superior" << endl;
-            alignmentA = sequence1[i-1] + alignmentA;
-            alignmentB = '-' + alignmentB;
-            i--;
-        }
-        //Caso cuando casilla superior tiene mayor valor
+        //Caso cuando casilla lateral tiene mayor valor
         else{
             cout << "lateral" << endl;
             alignmentA = '-' + alignmentA;
@@ -84,6 +80,8 @@ void getAlignmentSolution(vector<vector<int> >& scoreMatrix, vector<vector<int> 
     cout << alignmentA << endl;
     cout << alignmentB << endl;
 }
+
+
 
 void needlemanWunsch(vector<vector<int> >& scoreMatrix,vector<vector<int> >& matchMatrix,const string& sequence1,const string& sequence2){
     //Generar primera fila y columna
