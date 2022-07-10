@@ -30,95 +30,79 @@ void fillMatchMatrix(vector<vector<int> >& matchMatrix,const string& sequence1 ,
 }
 
 
-void printScoreMatrix(const vector<vector<int> >& scoreMatrix , const string& minSequence , const string& maxSequence ){
+void printScoreMatrix(const vector<vector<int> >& scoreMatrix , const string& sequence1 , const string& sequence2 ){
     /* Imprime la matriz de puntajes */
-
-    cout << "_ _ ";
-    for(int i=0 ; i<maxSequence.length() ; i++){ //Secuencia mas larga
-        cout << maxSequence[i] << " ";
-    }
-    cout << endl;
-    cout << "_ ";
-    
     for(int i=0 ; i<scoreMatrix.size() ; i++){
-        if(i > 0){
-            cout << minSequence[i-1] << " "; //Secuencia mas corta
-        }
-
         for(int j=0 ; j<scoreMatrix[i].size() ; j++){
             cout << scoreMatrix[i][j] << " ";
         }
         cout << endl;
     }
+    cout << endl;
+
 }
 
-int gapScore(){
+
+int gapPenalty(){
     return -2;
 }
 
-int scoreAsigner(const char a, const char b ){
-    int score = -1;
-    if(a == b) score = 1;
-    return score;
-}
 
 
-void getAlignmentSolution(vector<vector<int> >& scoreMatrix, const string& maxSequence, const string& minSequence){
+void getAlignmentSolution(vector<vector<int> >& scoreMatrix, vector<vector<int> >& matchMatrix,const string& sequence1, const string& sequence2){
     string alignmentA;
     string alignmentB;
 
-    int i = minSequence.length();
-    int j = maxSequence.length();
+    int i = sequence1.length();
+    int j = sequence2.length();
 
-    while(i > 0 || j > 0){
-        //cout << "casilla " << "(" << i << "," << j << ") -> " << scoreMatrix[i][j] << endl;
+    while(i > 0 && j > 0){
         //Caso cuando la diagonal mas el match tiene maximo valor
-        if(i > 0 && j > 0 && scoreMatrix[i][j] == scoreMatrix[i-1][j-1] + scoreAsigner(minSequence[i-1],maxSequence[j-1])){
-            cout << "diagonal" << endl;
-            alignmentA += minSequence[i-1];
-            alignmentB += maxSequence[j-1];
+        if(i > 0 && j > 0 && scoreMatrix[i][j] == scoreMatrix[i-1][j-1] + matchMatrix[i-1][j-1]){
+            cout << "Diagonal" << endl;
+            alignmentA = sequence1[i-1] + alignmentA;
+            alignmentB = sequence2[j-1] + alignmentB;
             i--;
             j--;
         }
 
-        //Caso cuando casilla lateral tiene mayor valor
-        if(j > 0 && scoreMatrix[i][j] == scoreMatrix[i][j-1] + gapScore()){
-            cout << "lateral" << endl;
-            alignmentA += "-";
-            alignmentB += maxSequence[j-1];
-            j--;
+        //Caso cuando casilla superior tiene mayor valor
+        else if(i > 0 && scoreMatrix[i][j] == scoreMatrix[i-1][j] + gapPenalty()){
+            cout << "superior" << endl;
+            alignmentA = sequence1[i-1] + alignmentA;
+            alignmentB = '-' + alignmentB;
+            i--;
         }
         //Caso cuando casilla superior tiene mayor valor
         else{
-            cout << "superior" << endl;
-            alignmentB += "-";
-            alignmentA += minSequence[i-1];
-            i--;
+            cout << "lateral" << endl;
+            alignmentA = '-' + alignmentA;
+            alignmentB = sequence2[j-1] + alignmentB;
+            j--;
         }
     }
     cout << alignmentA << endl;
     cout << alignmentB << endl;
 }
 
-void needlemanWunsch(vector<vector<int> >& scoreMatrix, const string& sequence1,const string& sequence2){
+void needlemanWunsch(vector<vector<int> >& scoreMatrix,vector<vector<int> >& matchMatrix,const string& sequence1,const string& sequence2){
     //Generar primera fila y columna
-    for(int i=1 ; i<scoreMatrix.size() ; i++){
-        scoreMatrix[i][0] = scoreMatrix[i-1][0] + gapScore();
+    for(int i=0 ; i<sequence1.length()+1 ; i++){
+        scoreMatrix[i][0] = i * gapPenalty();
     }
 
-    for(int j=1 ; j<scoreMatrix[0].size(); j++){
-        scoreMatrix[0][j] = scoreMatrix[0][j-1] + gapScore();
+    for(int j=0 ; j<sequence2.length()+1 ; j++){
+        scoreMatrix[0][j] = j * gapPenalty();
     }
 
-    //computar valores maximos para cada casilla
-    cout << sequence1 << " " << sequence2 << endl;
-
-    for(int i=0 ; i<sequence1.length() ; i++){
-        for(int j=0 ; j<sequence2.length() ; j++){
-            int currentMax = max(scoreMatrix[i][j+1] + gapScore() , scoreMatrix[i+1][j] + gapScore());
-            scoreMatrix[i+1][j+1] = max(scoreMatrix[i][j] + scoreAsigner(sequence1[i],sequence2[j]),currentMax);
+    for(int i=1 ; i<sequence1.length()+1 ; i++){
+        for(int j=1 ; j<sequence2.length()+1 ; j++){
+            int currentMax = max(scoreMatrix[i-1][j] + gapPenalty() , scoreMatrix[i][j-1] + gapPenalty()); //max superior-lateral
+            scoreMatrix[i][j] = max(scoreMatrix[i-1][j-1] + matchMatrix[i-1][j-1] , currentMax); //max actual - diagonal
         }
     }
+
+    cout << "Puntaje: " << scoreMatrix[sequence1.length()][sequence2.length()] << endl;
 }
 
 
@@ -134,34 +118,19 @@ int main(){
     cout << "Secuencia 2: ";
     cin >> sequence2;
 
-    string maxSequence , minSequence;
-    if(sequence1.length() > sequence2.length()){
-        maxSequence = sequence1;
-        minSequence = sequence2;
-    }else{
-        maxSequence = sequence2;
-        minSequence = sequence1;
-    }
-
-
-    int n = minSequence.length();
-    int m = maxSequence.length();
-
-    //primer parametro: secuencia mas corta
-    //segundo parametro: secuencia mas larga
+    int n = sequence1.length();
+    int m = sequence2.length();
 
     vector<vector<int> > scoreMatrix = buildMatrix(n+1,m+1);
     vector<vector<int> > matchMatrix = buildMatrix(n,m);
-    fillMatchMatrix(matchMatrix,minSequence,maxSequence);
-
-    //Imprimir tabla DP
-    needlemanWunsch(scoreMatrix,minSequence,maxSequence);
-    printScoreMatrix(scoreMatrix,minSequence,maxSequence);
-
-
+    fillMatchMatrix(matchMatrix,sequence1,sequence2);
     
 
-    //getAlignmentSolution(scoreMatrix,minSequence,maxSequence);
+    //Imprimir tabla DP
+    needlemanWunsch(scoreMatrix,matchMatrix,sequence1,sequence2);
+    printScoreMatrix(scoreMatrix,sequence1,sequence2);
+
+    getAlignmentSolution(scoreMatrix,matchMatrix,sequence1,sequence2);
 
     return 0;
 }
