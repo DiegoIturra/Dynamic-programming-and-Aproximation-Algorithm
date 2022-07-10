@@ -77,8 +77,8 @@ void getAlignmentSolution(vector<vector<int> >& scoreMatrix, vector<vector<int> 
             j--;
         }
     }
-    cout << alignmentA << endl;
-    cout << alignmentB << endl;
+    cout << "Alineacion 1: " << alignmentA << endl;
+    cout << "Alineacion 2: " << alignmentB << endl;
 }
 
 
