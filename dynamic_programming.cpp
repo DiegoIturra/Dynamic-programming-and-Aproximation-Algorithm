@@ -56,14 +56,14 @@ void getAlignmentSolution(vector<vector<int> >& scoreMatrix, vector<vector<int> 
 
         //Caso cuando casilla superior tiene mayor valor
         if(i > 0 && scoreMatrix[i][j] == scoreMatrix[i-1][j] + gapPenalty()){
-            cout << "superior" << endl;
+            //cout << "superior" << endl;
             alignmentA = sequence1[i-1] + alignmentA;
             alignmentB = '-' + alignmentB;
             i--;
         }
         //Caso cuando la diagonal mas el match tiene maximo valor
         else if(i > 0 && j > 0 && scoreMatrix[i][j] == scoreMatrix[i-1][j-1] + matchMatrix[i-1][j-1]){
-            cout << "Diagonal" << endl;
+            //cout << "Diagonal" << endl;
             alignmentA = sequence1[i-1] + alignmentA;
             alignmentB = sequence2[j-1] + alignmentB;
             i--;
@@ -71,7 +71,7 @@ void getAlignmentSolution(vector<vector<int> >& scoreMatrix, vector<vector<int> 
         }
         //Caso cuando casilla lateral tiene mayor valor
         else{
-            cout << "lateral" << endl;
+            //cout << "lateral" << endl;
             alignmentA = '-' + alignmentA;
             alignmentB = sequence2[j-1] + alignmentB;
             j--;

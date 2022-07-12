@@ -106,7 +106,7 @@ class Graph{
 				}
 			}
 
-			cout << "Numero de vertices en 2-aprox vertex cover: " << coveredSet.size() << endl;
+			cout << "Numero de vertices en 2-aprox vertex cover: " << coveredSet.size() << endl << endl;
 		}
 };
 
@@ -117,6 +117,7 @@ int main(){
 	int numVertex = 7;
 	
 	//Ejemplo con vertex cover 2-aproximado = 6 y valor optimo = 3
+	cout << "Grafo cuya solucion aproximada es 2 veces el valor optimo" << endl << endl;
 	Graph graph1 = Graph(numVertex);
 	graph1.addEdge(0,1);
 	graph1.addEdge(1,2);
@@ -130,8 +131,10 @@ int main(){
 	graph1.aproxVertexCover();
 
 
-	//Ejemplo en el cual vertex cover 2-aproximado = optimo con numero de vertices igual a 2
-	numVertex = 6;
+	//Ejemplo en el cual vertex cover 2-aproximado = optimo con numero de vertices igual a 2 (un solo vertice es el vertex cover)
+	//pero como se toman aristas solo entrega una 
+	cout << "Grafo cuya solucion aproximada es igual al optimo" << endl << endl;
+ 	numVertex = 6;
 	Graph graph2 = Graph(numVertex);
 	graph2.addEdge(0,1);
 	graph2.addEdge(0,2);
@@ -143,9 +146,11 @@ int main(){
 	
 
 
+	cout << "Se crea grafo con los cliques dados en el enunciado del proyecto" << endl;
 	//Cliques
-	int numCliques = 5;
-	numVertex = 11;
+	int numCliques;
+	cin >> numCliques;
+	cin >> numVertex;
 	
 	int sizeOfclique;
 
